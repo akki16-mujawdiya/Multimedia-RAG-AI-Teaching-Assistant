@@ -4,9 +4,7 @@ import json
 import pandas as pd
 import joblib
 
-# -----------------------------
 # Create embeddings
-# -----------------------------
 def create_embedding(text_list):
 
     cleaned_list = [
@@ -30,9 +28,7 @@ def create_embedding(text_list):
     return response["embeddings"]
 
 
-# -----------------------------
 # Read all json files
-# -----------------------------
 json_files = os.listdir("jsons")
 
 all_chunks = []
@@ -72,9 +68,7 @@ for file in json_files:
         chunk_id += 1
 
 
-# -----------------------------
 # DataFrame
-# -----------------------------
 df = pd.DataFrame(all_chunks)
 
 print("\nColumns:")
