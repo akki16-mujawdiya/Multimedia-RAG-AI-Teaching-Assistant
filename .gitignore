@@ -1,0 +1,23 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Large files
+embeddings.joblib
+
+# Generated files
+prompt.txt
+response.txt
+output.json
+
+# Folders
+audios/
+videos/
+jsons/
+whisper/
+
+# VS Code
+.vscode/
