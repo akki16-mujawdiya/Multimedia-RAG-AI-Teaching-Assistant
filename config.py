@@ -4,24 +4,20 @@ import numpy as np
 import joblib
 from sklearn.metrics.pairwise import cosine_similarity
 
-# ==========================================
-# Settings
-# ==========================================
+
 EMBED_MODEL = "nomic-embed-text"
 LLM_MODEL = "llama3.2"
 TOP_K = 10
 
-# ==========================================
+
 # Load embeddings
-# ==========================================
 df = joblib.load("embeddings.joblib")
 
 print("\nColumns inside embeddings.joblib:")
 print(df.columns)
 
-# ==========================================
+
 # Create embedding
-# ==========================================
 def create_embedding(text):
 
     response = requests.post(
@@ -40,9 +36,8 @@ def create_embedding(text):
     return np.array(response_json["embeddings"][0])
 
 
-# ==========================================
+
 # LLM inference
-# ==========================================
 def inference(prompt):
 
     response = requests.post(
@@ -59,34 +54,26 @@ def inference(prompt):
     return response_json["response"]
 
 
-# ==========================================
+
 # User input
-# ==========================================
 incoming_query = input("\nAsk a question: ").strip()
 
 print("\nThinking...")
 
-# ==========================================
+
 # Query embedding
-# ==========================================
 question_embedding = create_embedding(incoming_query)
 
-# ==========================================
 # Stored embeddings
-# ==========================================
 valid_embeddings = np.vstack(df["embedding"].values)
 
-# ==========================================
 # Similarities
-# ==========================================
 similarities = cosine_similarity(
     valid_embeddings,
     [question_embedding]
 ).flatten()
 
-# ==========================================
 # Top K chunks
-# ==========================================
 top_indices = similarities.argsort()[::-1][:TOP_K]
 
 new_df = df.iloc[top_indices]
@@ -102,9 +89,7 @@ new_df["title"] = new_df["number"].astype(str).map(
     lambda x: video_names.get(x, f"Video {x}")
 )
 
-# ==========================================
 # DEBUG
-# ==========================================
 print("\n========== RETRIEVED CHUNKS ==========\n")
 
 print(
@@ -113,9 +98,7 @@ print(
     ]
 )
 
-# ==========================================
 # Context
-# ==========================================
 context = ""
 
 for _, row in new_df.iterrows():
@@ -129,9 +112,8 @@ Content      : {row['text']}
 """
 
 
-# ==========================================
+
 # Prompt
-# ==========================================
 prompt = f"""
 You are an AI teaching assistant for a web development course.
 
@@ -164,18 +146,14 @@ Explanation:
 with open("prompt.txt", "w", encoding="utf-8") as f:
     f.write(prompt)
 
-# ==========================================
 # Generate response
-# ==========================================
 response = inference(prompt)
 
 # Save response
 with open("response.txt", "w", encoding="utf-8") as f:
     f.write(response)
 
-# ==========================================
 # Output
-# ==========================================
 print("\n==========================")
 print("AI RESPONSE")
 print("==========================\n")
